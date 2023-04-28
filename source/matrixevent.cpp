@@ -1,4 +1,4 @@
-#include "event.h"
+#include "matrixevent.h"
 #include <string.h>
 #include "util.h"
 #include "defines.h"
@@ -23,13 +23,13 @@ enum struct EventFileField: u8 {
 	end = 0xFF,
 };
 
-Event::Event(FILE* fp) {
+MatrixEvent::MatrixEvent(FILE* fp) {
 	readFromFile(fp);
 }
 
 #define D if(0)
 
-Event::Event(json_t* event) {
+MatrixEvent::MatrixEvent(json_t* event) {
 	type = EventType::invalid;
 	const char* typeMaybe = json_object_get_string_value(event, "type");
 	const char* senderMaybe = json_object_get_string_value(event, "sender");
@@ -203,7 +203,7 @@ Event::Event(json_t* event) {
 	}
 }
 
-Event::~Event() {
+MatrixEvent::~MatrixEvent() {
 	switch(type) {
 		case EventType::invalid:
 			// do nothing
@@ -229,18 +229,18 @@ Event::~Event() {
 	}
 }
 
-void Event::setRoom(Room* r) {
+void MatrixEvent::setRoom(Room* r) {
 	room = r;
 }
 
-std::string Event::getDisplayName(std::string id) {
+std::string MatrixEvent::getDisplayName(std::string id) {
 	if (!room) {
 		return id;
 	}
 	return room->getMemberDisplayName(id);
 }
 
-void Event::print() {
+void MatrixEvent::print() {
 	switch (type) {
 		case EventType::invalid:
 			// do nothing
@@ -317,11 +317,11 @@ void Event::print() {
 	}
 }
 
-bool Event::isValid() {
+bool MatrixEvent::isValid() {
 	return type != EventType::invalid;
 }
 
-void Event::writeToFile(FILE* fp) {
+void MatrixEvent::writeToFile(FILE* fp) {
 	file_write_obj(EventFileField::type, fp);
 	file_write_obj(type, fp);
 	
@@ -383,7 +383,7 @@ void Event::writeToFile(FILE* fp) {
 	file_write_obj(EventFileField::end, fp);
 }
 
-void Event::readFromFile(FILE* fp) {
+void MatrixEvent::readFromFile(FILE* fp) {
 	D printf_top("--------\n");
 	EventFileField field;
 	bool done = false;

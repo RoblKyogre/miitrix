@@ -34,7 +34,7 @@ private:
 	std::queue<RequestSetTypingQueue> setTypingQueue;
 	bool stopLooping = false;
 	bool isLooping = false;
-	Thread loopThread;
+	Thread* loopThread;
 public:
 	void start();
 	void stop();

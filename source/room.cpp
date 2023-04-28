@@ -40,7 +40,7 @@ Room::~Room() {
 
 void Room::printEvents() {
 	printf_top("\x1b[2J");
-	Event* lastEvt = NULL;
+	MatrixEvent* lastEvt = NULL;
 	for (auto const& evt: events) {
 		evt->print();
 		lastEvt = evt;
@@ -106,7 +106,7 @@ std::string Room::getDisplayName() {
 	return roomId;
 }
 
-void Room::addEvent(Event* evt) {
+void Room::addEvent(MatrixEvent* evt) {
 	EventType type = evt->type;
 	// let's check if this is an edit first
 	if (type == EventType::m_room_message && evt->message->editEventId != "") {
@@ -125,7 +125,7 @@ void Room::addEvent(Event* evt) {
 	if (type == EventType::m_room_redaction) {
 		// we need the iterator here for removing
 		for (auto it = events.begin(); it != events.end(); it++) {
-			Event* e = *it;
+			MatrixEvent* e = *it;
 			if (e->eventId == evt->redaction->redacts) {
 				// okay, redact it
 				events.erase(it);
@@ -168,7 +168,7 @@ void Room::addEvent(Event* evt) {
 	}
 	
 	// sort the events
-	sort(events.begin(), events.end(), [](Event* e1, Event* e2) {
+	sort(events.begin(), events.end(), [](MatrixEvent* e1, MatrixEvent* e2) {
 		return e1->originServerTs < e2->originServerTs;
 	});
 	
@@ -362,7 +362,7 @@ void Room::readFromFile(FILE* fp) {
 				D printf_top("num events: %lu\n", num);
 				if (num) {
 					for (u32 i = 0; i < num; i++) {
-						Event* evt = new Event(fp);
+						MatrixEvent* evt = new MatrixEvent(fp);
 						evt->setRoom(this);
 						events.push_back(evt);
 					}

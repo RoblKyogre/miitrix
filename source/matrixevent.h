@@ -1,5 +1,5 @@
-#ifndef _EVENT_H_
-#define _EVENT_H_
+#ifndef _MATRIXEVENT_H_
+#define _MATRIXEVENT_H_
 
 #include <switch.h>
 #include <string>
@@ -64,7 +64,7 @@ struct EventRoomRedaction {
 	std::string redacts;
 };
 
-class Event {
+class MatrixEvent {
 private:
 	Room* room = NULL;
 	
@@ -86,9 +86,9 @@ public:
 		EventRoomRedaction* redaction;
 	};
 	
-	Event(FILE* fp);
-	Event(json_t* event);
-	~Event();
+	MatrixEvent(FILE* fp);
+	MatrixEvent(json_t* event);
+	~MatrixEvent();
 	void setRoom(Room* r);
 	void print();
 	bool isValid();
@@ -96,4 +96,4 @@ public:
 	void readFromFile(FILE* fp);
 };
 
-#endif // _EVENT_H_
+#endif // _MATRIXEVENT_H_

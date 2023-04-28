@@ -30,7 +30,7 @@ Matrix::Client* client;
 
 void sync_new_event(std::string roomId, json_t* event) {
 	roomCollection->ensureExists(roomId);
-	Event* evt = new Event(event);
+	MatrixEvent* evt = new MatrixEvent(event);
 	if (!evt->isValid()) {
 		delete evt;
 		return;
@@ -57,63 +57,60 @@ void sync_room_limited(std::string roomId, std::string nextBatch) {
 }
 
 std::string getMessage() {
-	SwkbdState swkbd;
+	SwkbdConfig swkbd;
 	char mybuf[1024];
-	swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 2, -1);
-	swkbdSetHintText(&swkbd, "Enter message...");
-	swkbdInputText(&swkbd, mybuf, sizeof(mybuf));
+	swkbdCreate(&swkbd, 0);
+	swkbdConfigMakePresetDefault(&swkbd);
+	swkbdConfigSetGuideText(&swkbd, "Enter message...");
+	swkbdShow(&swkbd, mybuf, sizeof(mybuf));
 	return mybuf;
 }
 
 std::string getHomeserverUrl() {
-	SwkbdState swkbd;
+	SwkbdConfig swkbd;
 	char mybuf[120];
-	swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 1, -1);
-	swkbdSetValidation(&swkbd, SWKBD_NOTEMPTY_NOTBLANK, 0, 0);
-	swkbdSetHintText(&swkbd, "Homeserver URL");
-	SwkbdButton button = swkbdInputText(&swkbd, mybuf, sizeof(mybuf));
-	if (button == SWKBD_BUTTON_LEFT) {
-		return "";
-	}
+	swkbdCreate(&swkbd, 0);
+	swkbdConfigMakePresetDefault(&swkbd);
+	swkbdConfigSetGuideText(&swkbd, "Homeserver URL");
+	swkbdShow(&swkbd, mybuf, sizeof(mybuf));
 	return mybuf;
 }
 
 std::string getUsername() {
-	SwkbdState swkbd;
+	SwkbdConfig swkbd;
 	char mybuf[120];
-	swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 1, -1);
-	swkbdSetValidation(&swkbd, SWKBD_NOTEMPTY_NOTBLANK, 0, 0);
-	swkbdSetHintText(&swkbd, "Username");
-	swkbdInputText(&swkbd, mybuf, sizeof(mybuf));
+	swkbdCreate(&swkbd, 0);
+	swkbdConfigMakePresetDefault(&swkbd);
+	swkbdConfigSetGuideText(&swkbd, "Username");
+	swkbdShow(&swkbd, mybuf, sizeof(mybuf));
 	return mybuf;
 }
 
 std::string getPassword() {
-	SwkbdState swkbd;
+	SwkbdConfig swkbd;
 	char mybuf[120];
-	swkbdInit(&swkbd, SWKBD_TYPE_NORMAL, 1, -1);
-	swkbdSetPasswordMode(&swkbd, SWKBD_PASSWORD_HIDE_DELAY);
-	swkbdSetValidation(&swkbd, SWKBD_NOTEMPTY_NOTBLANK, 0, 0);
-	swkbdSetHintText(&swkbd, "Password");
-	swkbdInputText(&swkbd, mybuf, sizeof(mybuf));
+	swkbdCreate(&swkbd, 0);
+	swkbdConfigMakePresetPassword(&swkbd);
+	swkbdConfigSetGuideText(&swkbd, "Password");
+	swkbdShow(&swkbd, mybuf, sizeof(mybuf));
 	return mybuf;
 }
 
 void loadRoom() {
-	printf_top("Loading room %s...\n", currentRoom->getDisplayName().c_str());
+	printf("Loading room %s...\n", currentRoom->getDisplayName().c_str());
 	renderRoomDisplay = true;
 	state = State::roomDisplaying;
-	printf_top("==================================================\n");
+	printf("==================================================\n");
 	currentRoom->printEvents();
 }
 
 int roomPickerTop = 0;
 int roomPickerItem = 0;
-void roomPicker() {
-	u32 kDown = hidKeysDown();
+void roomPicker(PadState &pad) {
+	u64 kDown = padGetButtonsDown(&pad); // CHANGE
 	bool renderRooms = false;
-	if (kDown & KEY_DOWN || kDown & KEY_RIGHT) {
-		if (kDown & KEY_DOWN) {
+	if (kDown & HidNpadButton_AnyDown || kDown & HidNpadButton_AnyRight) {
+		if (kDown & HidNpadButton_AnyDown) {
 			roomPickerItem++;
 		} else {
 			roomPickerItem += 25;
@@ -126,8 +123,8 @@ void roomPicker() {
 		}
 		renderRooms = true;
 	}
-	if (kDown & KEY_UP || kDown & KEY_LEFT) {
-		if (kDown & KEY_UP) {
+	if (kDown & HidNpadButton_AnyUp || kDown & HidNpadButton_AnyLeft) {
+		if (kDown & HidNpadButton_AnyUp) {
 			roomPickerItem--;
 		} else {
 			roomPickerItem -= 25;
@@ -140,7 +137,7 @@ void roomPicker() {
 		}
 		renderRooms = true;
 	}
-	if (kDown & KEY_A) {
+	if (kDown & HidNpadButton_A) {
 		currentRoom = roomCollection->getByIndex(roomPickerItem);
 		if (currentRoom) {
 			loadRoom();
@@ -150,18 +147,18 @@ void roomPicker() {
 	roomCollection->maybePrintPicker(roomPickerTop, roomPickerItem, renderRooms);
 }
 
-void displayRoom() {
+void displayRoom(PadState &pad) {
 	if (currentRoom->haveDirty()) {
 		currentRoom->printEvents();
 	}
-	u32 kDown = hidKeysDown();
-	if (kDown & KEY_B) {
+	u64 kDown = padGetButtonsDown(&pad); // CHANGE
+	if (kDown & HidNpadButton_B) {
 		state = State::roomPicking;
-		printf_top("==================================================\n");
+		printf("==================================================\n");
 		roomCollection->maybePrintPicker(roomPickerTop, roomPickerItem, true);
 		return;
 	}
-	if (kDown & KEY_A) {
+	if (kDown & HidNpadButton_A) {
 		request->setTyping(currentRoom->getId(), true);
 		std::string message = getMessage();
 		request->setTyping(currentRoom->getId(), false);
@@ -172,13 +169,13 @@ void displayRoom() {
 	if (!renderRoomDisplay && !currentRoom->haveDirtyInfo()) {
 		return;
 	}
-	printf_bottom("\x1b[2J");
+	printf("\x1b[2J");
 	renderRoomDisplay = false;
 	currentRoom->printInfo();
-	printf_bottom("\nPress A to send a message\nPress B to go back\n");
+	printf("\nPress A to send a message\nPress B to go back\n");
 }
 
-bool setupAcc() {
+bool setupAcc(PadState &pad) {
 	std::string homeserverUrl = store->getVar("hsUrl");
 	std::string token = store->getVar("token");
 	std::string userId = "";
@@ -186,24 +183,20 @@ bool setupAcc() {
 		client = new Matrix::Client(homeserverUrl, token, store);
 		userId = client->getUserId();
 		if (userId != "") {
-			printf_top("Logged in as %s\n", userId.c_str());
+			printf("Logged in as %s\n", userId.c_str());
 			return true;
 		}
 		delete client;
 		client = NULL;
-		printf_top("Invalid token\n");
+		printf("Invalid token\n");
 	}
-	printf_top("Press A to log in\n");
-	while(aptMainLoop()) {
-		hidScanInput();
-		u32 kDown = hidKeysDown();
-		if (kDown & KEY_A) break;
-		if (kDown & KEY_START) return false;
-		// Flush and swap framebuffers
-		gfxFlushBuffers();
-		gfxSwapBuffers();
-		//Wait for VBlank
-		gspWaitForVBlank();
+	printf("Press A to log in\n");
+	while(appletMainLoop()) {
+		padUpdate(&pad);
+		u64 kDown = padGetButtonsDown(&pad); // CHANGE
+		if (kDown & HidNpadButton_A) break;
+		if (kDown & HidNpadButton_Plus) return false;
+		consoleUpdate(NULL);
 	}
 
 	homeserverUrl = getHomeserverUrl();
@@ -218,21 +211,21 @@ bool setupAcc() {
 	}
 
 	userId = client->getUserId();
-	printf_top("Logged in as %s\n", userId.c_str());
+	printf("Logged in as %s\n", userId.c_str());
 	store->setVar("hsUrl", homeserverUrl);
 	store->setVar("token", client->getToken());
 	return true;
 }
 
 void clearCache() {
-	printf_top("Clearing cache...\n");
+	printf("Clearing cache...\n");
 	store->delVar("synctoken");
 	store->delVar("roomlist");
 	remove_directory("rooms");
 }
 
 void logout() {
-	printf_top("Logging out...\n");
+	printf("Logging out...\n");
 	client->logout();
 	store->delVar("token");
 	store->delVar("hsUrl");
@@ -240,39 +233,40 @@ void logout() {
 }
 
 int main(int argc, char** argv) {
-	gfxInitDefault();
+	consoleInit(NULL);//gfxInitDefault();
 	
-	topScreenConsole = new PrintConsole;
-	bottomScreenConsole = new PrintConsole;
-	consoleInit(GFX_TOP, topScreenConsole);
-	consoleInit(GFX_BOTTOM, bottomScreenConsole);
+	//topScreenConsole = new PrintConsole;
+	//bottomScreenConsole = new PrintConsole;
+	//consoleInit(GFX_TOP, topScreenConsole);
+	//consoleInit(GFX_BOTTOM, bottomScreenConsole);
 
 	store->init();
 
-	printf_top("Miitrix v0.0.0\n");
-	
-	while (!setupAcc()) {
-		printf_top("Failed to log in!\n\n");
-		printf_top("Press START to exit.\n");
-		printf_top("Press SELECT to try again.\n\n");
-	
-		while (aptMainLoop()) {
-			hidScanInput();
-			u32 kDown = hidKeysDown();
+	printf("Miitrix v0.0.0\n");
 
-			if (kDown & KEY_START) {
-				gfxExit();
+	padConfigureInput(1, HidNpadStyleSet_NpadStandard);
+
+	PadState pad;
+    padInitializeDefault(&pad);
+	
+	while (!setupAcc(pad)) {
+		printf("Failed to log in!\n\n");
+		printf("Press START to exit.\n");
+		printf("Press SELECT to try again.\n\n");
+	
+		while (appletMainLoop()) {
+			padUpdate(&pad);
+			u64 kDown = padGetButtonsDown(&pad);
+
+			if (kDown & HidNpadButton_Plus) {
+				consoleExit(NULL);
 				return 0;
 			}
-			if (kDown & KEY_SELECT) {
+			if (kDown & HidNpadButton_Minus) {
 				break;
 			}
 
-			// Flush and swap framebuffers
-			gfxFlushBuffers();
-			gfxSwapBuffers();
-			// Wait for VBlank
-			gspWaitForVBlank();
+			consoleUpdate(NULL);
 		}
 	}
 
@@ -281,7 +275,7 @@ int main(int argc, char** argv) {
 	client->setRoomInfoCallback(&sync_room_info);
 	client->setRoomLimitedCallback(&sync_room_limited);
 	
-	printf_top("Loading channel list...\n");
+	printf("Loading channel list...\n");
 	/*
 	while(aptMainLoop()) {
 		hidScanInput();
@@ -298,42 +292,37 @@ int main(int argc, char** argv) {
 	request->start();
 	client->startSyncLoop();
 
-	while (aptMainLoop()) {
+	while (appletMainLoop()) {
 		//printf("%d\n", i++);
 		//Scan all the inputs. This should be done once for each frame
-		hidScanInput();
+		padUpdate(&pad);
 
 		roomCollection->frameAllDirty();
 
 		if (state == State::roomPicking) {
-			roomPicker();
+			roomPicker(pad);
 		} else if (state == State::roomDisplaying) {
-			displayRoom();
+			displayRoom(pad);
 		}
 
 		roomCollection->writeToFiles();
 		roomCollection->resetAllDirty();
 		
-		u32 kDown = hidKeysDown();
-		if (kDown & KEY_START) {
-			u32 kHeld = hidKeysHeld();
-			if (kHeld & KEY_X) {
+		u64 kDown = padGetButtonsDown(&pad);
+		if (kDown & HidNpadButton_Plus) {
+			u64 kHeld = padGetButtons(&pad);
+			if (kHeld & HidNpadButton_X) {
 				clearCache();
 			}
-			if (kHeld & KEY_B) {
+			if (kHeld & HidNpadButton_B) {
 				logout();
 			}
 			break; // break in order to return to hbmenu
 		}
-		// Flush and swap framebuffers
-		gfxFlushBuffers();
-		gfxSwapBuffers();
-
-		//Wait for VBlank
-		gspWaitForVBlank();
+		consoleUpdate(NULL);
 	}
 //	client->stopSyncLoop();
 
-	gfxExit();
+	consoleExit(NULL);
 	return 0;
 }
