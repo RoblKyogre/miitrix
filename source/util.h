@@ -2,7 +2,7 @@
 #define _UTIL_H_
 #include <jansson.h>
 #include <string>
-#include <3ds.h>
+#include <switch.h>
 
 template<typename T>
 void file_write_obj(T obj, FILE* fp) {

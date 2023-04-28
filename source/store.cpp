@@ -1,5 +1,5 @@
 #include "store.h"
-#include <3ds.h>
+#include <switch.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>

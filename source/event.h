@@ -1,7 +1,7 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
 
-#include <3ds.h>
+#include <switch.h>
 #include <string>
 #include <jansson.h>
 #include "room.h"

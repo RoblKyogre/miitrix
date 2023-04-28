@@ -1,4 +1,4 @@
-#include <3ds.h>
+#include <switch.h>
 #include <stdio.h>
 #include <matrixclient.h>
 

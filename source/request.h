@@ -2,7 +2,7 @@
 #define _REQUEST_H_
 
 #include <queue>
-#include <3ds.h>
+#include <switch.h>
 #include <string>
 
 struct RequestGetMemberInfoQueue {
