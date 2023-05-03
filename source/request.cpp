@@ -71,14 +71,14 @@ void Request::start() {
 	stopLooping = false;
 	s32 prio = 0;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	threadCreate(loopThread, startLoopWithoutClass, this, NULL, 8*1024, prio-1, -2);
+	threadCreate(&loopThread, startLoopWithoutClass, this, NULL, 8*1024, prio-1, -2);
 }
 
 void Request::stop() {
 	stopLooping = true;
 	if (isLooping) {
-		threadWaitForExit(loopThread);
-		threadClose(loopThread);
+		threadWaitForExit(&loopThread);
+		threadClose(&loopThread);
 	}
 	isLooping = false;
 }

@@ -74,8 +74,8 @@ void RoomCollection::maybePrintPicker(int pickerTop, int pickerItem, bool overri
 		return;
 	}
 	order();
-	printf_bottom("\x1b[2J");
-	printf_bottom("\x1b[%d;1H>", pickerItem - pickerTop + 1);
+	printf("\x1b[2J");
+	printf("\x1b[%d;1H>", pickerItem - pickerTop + 1);
 	for (u8 i = 0; i < 30; i++) {
 		if (i + pickerTop >= rooms.size()) {
 			break;
@@ -84,7 +84,7 @@ void RoomCollection::maybePrintPicker(int pickerTop, int pickerItem, bool overri
 		char name[40];
 		strncpy(name, room->getDisplayName().c_str(), 39);
 		name[39] = '\0';
-		printf_bottom("\x1b[%d;2H%s", i + 1, name);
+		printf("\x1b[%d;2H%s", i + 1, name);
 	}
 }
 
@@ -138,7 +138,7 @@ void RoomCollection::readFromFiles() {
 	char line[255];
 	while (fgets(line, sizeof(line), fp) != NULL) {
 		line[strcspn(line, "\n")] = '\0'; // remove the trailing \n
-		//printf_top("Loading room %s\n", line);
+		//printf("Loading room %s\n", line);
 		FILE* f = fopen(("rooms/" + urlencode(line)).c_str(), "rb");
 		if (f) {
 			Room* room = new Room(f);

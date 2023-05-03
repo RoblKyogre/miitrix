@@ -250,25 +250,25 @@ void MatrixEvent::print() {
 			std::string body = message->body;
 			switch (message->msgtype) {
 				case EventMsgType::m_text:
-					printf_top("\x1b[33m<%s>\x1b[0m %s\n", displayname.c_str(), body.c_str());
+					printf("\x1b[33m<%s>\x1b[0m %s\n", displayname.c_str(), body.c_str());
 					break;
 				case EventMsgType::m_notice:
-					printf_top("\x1b[33m<%s>\x1b[34m %s\x1b[0m\n", displayname.c_str(), body.c_str());
+					printf("\x1b[33m<%s>\x1b[34m %s\x1b[0m\n", displayname.c_str(), body.c_str());
 					break;
 				case EventMsgType::m_emote:
-					printf_top("\x1b[33m*%s\x1b[0m %s\n", displayname.c_str(), body.c_str());
+					printf("\x1b[33m*%s\x1b[0m %s\n", displayname.c_str(), body.c_str());
 					break;
 				case EventMsgType::m_file:
-					printf_top("\x1b[33m%s\x1b[0m uploaded a file \x1b[35m%s\x1b[0m\n", displayname.c_str(), body.c_str());
+					printf("\x1b[33m%s\x1b[0m uploaded a file \x1b[35m%s\x1b[0m\n", displayname.c_str(), body.c_str());
 					break;
 				case EventMsgType::m_image:
-					printf_top("\x1b[33m%s\x1b[0m uploaded an image \x1b[35m%s\x1b[0m\n", displayname.c_str(), body.c_str());
+					printf("\x1b[33m%s\x1b[0m uploaded an image \x1b[35m%s\x1b[0m\n", displayname.c_str(), body.c_str());
 					break;
 				case EventMsgType::m_video:
-					printf_top("\x1b[33m%s\x1b[0m uploaded a video \x1b[35m%s\x1b[0m\n", displayname.c_str(), body.c_str());
+					printf("\x1b[33m%s\x1b[0m uploaded a video \x1b[35m%s\x1b[0m\n", displayname.c_str(), body.c_str());
 					break;
 				case EventMsgType::m_audio:
-					printf_top("\x1b[33m%s\x1b[0m uploaded audio \x1b[35m%s\x1b[0m\n", displayname.c_str(), body.c_str());
+					printf("\x1b[33m%s\x1b[0m uploaded audio \x1b[35m%s\x1b[0m\n", displayname.c_str(), body.c_str());
 					break;
 			}
 			break;
@@ -278,37 +278,37 @@ void MatrixEvent::print() {
 			std::string member2 = getDisplayName(member->stateKey);
 			switch (member->membership) {
 				case EventMemberMembership::invite:
-					printf_top("\x1b[33m%s\x1b[0m invited \x1b[33m%s\x1b[0m to the room\n", member1.c_str(), member2.c_str());
+					printf("\x1b[33m%s\x1b[0m invited \x1b[33m%s\x1b[0m to the room\n", member1.c_str(), member2.c_str());
 					break;
 				case EventMemberMembership::join:
-					printf_top("\x1b[33m%s\x1b[0m joined the room\n", member1.c_str());
+					printf("\x1b[33m%s\x1b[0m joined the room\n", member1.c_str());
 					break;
 				case EventMemberMembership::leave:
 					if (sender == member->stateKey) {
-						printf_top("\x1b[33m%s\x1b[0m left the room\n", member1.c_str());
+						printf("\x1b[33m%s\x1b[0m left the room\n", member1.c_str());
 					} else {
-						printf_top("\x1b[33m%s\x1b[0m kicked \x1b[33m%s\x1b[0m from the room\n", member1.c_str(), member2.c_str());
+						printf("\x1b[33m%s\x1b[0m kicked \x1b[33m%s\x1b[0m from the room\n", member1.c_str(), member2.c_str());
 					}
 					break;
 				case EventMemberMembership::ban:
-					printf_top("\x1b[33m%s\x1b[0m banned \x1b[33m%s\x1b[0m from the room\n", member1.c_str(), member2.c_str());
+					printf("\x1b[33m%s\x1b[0m banned \x1b[33m%s\x1b[0m from the room\n", member1.c_str(), member2.c_str());
 					break;
 			}
 			break;
 		}
 		case EventType::m_room_name: {
 			std::string senderDisplay = getDisplayName(sender);
-			printf_top("\x1b[33m%s\x1b[0m changed the name of the room to \x1b[35m%s\x1b[0m\n", senderDisplay.c_str(), roomName->name.c_str());
+			printf("\x1b[33m%s\x1b[0m changed the name of the room to \x1b[35m%s\x1b[0m\n", senderDisplay.c_str(), roomName->name.c_str());
 			break;
 		}
 		case EventType::m_room_topic: {
 			std::string senderDisplay = getDisplayName(sender);
-			printf_top("\x1b[33m%s\x1b[0m changed the topic of the room to \x1b[35m%s\x1b[0m\n", senderDisplay.c_str(), roomTopic->topic.c_str());
+			printf("\x1b[33m%s\x1b[0m changed the topic of the room to \x1b[35m%s\x1b[0m\n", senderDisplay.c_str(), roomTopic->topic.c_str());
 			break;
 		}
 		case EventType::m_room_avatar: {
 			std::string senderDisplay = getDisplayName(sender);
-			printf_top("\x1b[33m%s\x1b[0m changed the icon of the room\n", senderDisplay.c_str());
+			printf("\x1b[33m%s\x1b[0m changed the icon of the room\n", senderDisplay.c_str());
 			break;
 		}
 		case EventType::m_room_redaction:
@@ -384,15 +384,15 @@ void MatrixEvent::writeToFile(FILE* fp) {
 }
 
 void MatrixEvent::readFromFile(FILE* fp) {
-	D printf_top("--------\n");
+	D printf("--------\n");
 	EventFileField field;
 	bool done = false;
 	while (file_read_obj(&field, fp)) {
-		D printf_top("event field: %d\n", (u8)field);
+		D printf("event field: %d\n", (u8)field);
 		switch(field) {
 			case EventFileField::type:
 				file_read_obj(&type, fp);
-				D printf_top("type: %d\n", (u8)type);
+				D printf("type: %d\n", (u8)type);
 				switch (type) {
 					case EventType::invalid:
 						// do nothing
@@ -419,59 +419,59 @@ void MatrixEvent::readFromFile(FILE* fp) {
 				break;
 			case EventFileField::sender:
 				sender = file_read_string(fp);
-				D printf_top("sender: %s\n", sender.c_str());
+				D printf("sender: %s\n", sender.c_str());
 				break;
 			case EventFileField::eventId:
 				eventId = file_read_string(fp);
-				D printf_top("eventId: %s\n", eventId.c_str());
+				D printf("eventId: %s\n", eventId.c_str());
 				break;
 			case EventFileField::originServerTs:
 				file_read_obj(&originServerTs, fp);
-				D printf_top("originServerTs: %llu\n", originServerTs);
+				D printf("originServerTs: %llu\n", originServerTs);
 				break;
 			case EventFileField::messageMsgtype:
 				file_read_obj(&(message->msgtype), fp);
-				D printf_top("msgtype: %d\n", (u8)message->msgtype);
+				D printf("msgtype: %d\n", (u8)message->msgtype);
 				break;
 			case EventFileField::messageBody:
 				message->body = file_read_string(fp);
-				D printf_top("body: %s\n", message->body.c_str());
+				D printf("body: %s\n", message->body.c_str());
 				break;
 			case EventFileField::messageEditEventId:
 				message->editEventId = file_read_string(fp);
-				D printf_top("editEventId: %s\n", message->editEventId.c_str());
+				D printf("editEventId: %s\n", message->editEventId.c_str());
 				break;
 			case EventFileField::memberInfoDisplayname:
 				member->info.displayname = file_read_string(fp);
-				D printf_top("displayname: %s\n", member->info.displayname.c_str());
+				D printf("displayname: %s\n", member->info.displayname.c_str());
 				break;
 			case EventFileField::memberInfoAvatarUrl:
 				member->info.avatarUrl = file_read_string(fp);
-				D printf_top("avatarUrl: %s\n", member->info.avatarUrl.c_str());
+				D printf("avatarUrl: %s\n", member->info.avatarUrl.c_str());
 				break;
 			case EventFileField::memberStateKey:
 				member->stateKey = file_read_string(fp);
-				D printf_top("stateKey: %s\n", member->stateKey.c_str());
+				D printf("stateKey: %s\n", member->stateKey.c_str());
 				break;
 			case EventFileField::memberMembership:
 				file_read_obj(&(member->membership), fp);
-				D printf_top("membership: %d\n", (u8)member->membership);
+				D printf("membership: %d\n", (u8)member->membership);
 				break;
 			case EventFileField::roomName:
 				roomName->name = file_read_string(fp);
-				D printf_top("roomName: %s\n", roomName->name.c_str());
+				D printf("roomName: %s\n", roomName->name.c_str());
 				break;
 			case EventFileField::roomTopic:
 				roomTopic->topic = file_read_string(fp);
-				D printf_top("roomTopic: %s\n", roomTopic->topic.c_str());
+				D printf("roomTopic: %s\n", roomTopic->topic.c_str());
 				break;
 			case EventFileField::roomAvatar:
 				roomAvatar->avatarUrl = file_read_string(fp);
-				D printf_top("avatarUrl: %s\n", roomAvatar->avatarUrl.c_str());
+				D printf("avatarUrl: %s\n", roomAvatar->avatarUrl.c_str());
 				break;
 			case EventFileField::redacts:
 				redaction->redacts = file_read_string(fp);
-				D printf_top("redacts: %s\n", redaction->redacts.c_str());
+				D printf("redacts: %s\n", redaction->redacts.c_str());
 				break;
 			case EventFileField::end:
 				done = true;
@@ -481,5 +481,5 @@ void MatrixEvent::readFromFile(FILE* fp) {
 			break;
 		}
 	}
-	D printf_top("event done\n");
+	D printf("event done\n");
 }

@@ -6,14 +6,14 @@
 
 void Store::init() {
 	struct stat st = {0};
-	// create miitrix dir if it doesn't exist
-	if (stat("/miitrix", &st) == -1) {
-		mkdir("/miitrix", 0700);
+	// create miitrix-nx dir if it doesn't exist
+	if (stat("/miitrix-nx", &st) == -1) {
+		mkdir("/miitrix-nx", 0700);
 	}
-	if (stat("/miitrix/rooms", &st) == -1) {
-		mkdir("/miitrix/rooms", 0700);
+	if (stat("/miitrix-nx/rooms", &st) == -1) {
+		mkdir("/miitrix-nx/rooms", 0700);
 	}
-	chdir("/miitrix");
+	chdir("/miitrix-nx");
 	
 	syncToken = getVar("synctoken");
 }

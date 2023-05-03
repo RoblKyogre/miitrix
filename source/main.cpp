@@ -233,7 +233,9 @@ void logout() {
 }
 
 int main(int argc, char** argv) {
-	consoleInit(NULL);//gfxInitDefault();
+	consoleInit(NULL);
+	
+	//gfxInitDefault();
 	
 	//topScreenConsole = new PrintConsole;
 	//bottomScreenConsole = new PrintConsole;
@@ -242,7 +244,7 @@ int main(int argc, char** argv) {
 
 	store->init();
 
-	printf("Miitrix v0.0.0\n");
+	printf("Miitrix-NX\n");
 
 	padConfigureInput(1, HidNpadStyleSet_NpadStandard);
 

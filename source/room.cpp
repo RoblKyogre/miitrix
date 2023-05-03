@@ -39,7 +39,7 @@ Room::~Room() {
 }
 
 void Room::printEvents() {
-	printf_top("\x1b[2J");
+	printf("\x1b[2J");
 	MatrixEvent* lastEvt = NULL;
 	for (auto const& evt: events) {
 		evt->print();
@@ -52,8 +52,8 @@ void Room::printEvents() {
 }
 
 void Room::printInfo() {
-	printf_bottom("Room name: %s\n", getDisplayName().c_str());
-	printf_bottom("Room topic: %s\n", topic.c_str());
+	printf("Room name: %s\n", getDisplayName().c_str());
+	printf("Room topic: %s\n", topic.c_str());
 }
 
 std::string Room::getMemberDisplayName(std::string mxid) {
@@ -330,36 +330,36 @@ void Room::readFromFile(FILE* fp) {
 	RoomFileField field;
 	bool done = false;
 	while (file_read_obj(&field, fp)) {
-		D printf_top("room field: %d\n", (u8)field);
+		D printf("room field: %d\n", (u8)field);
 		switch(field) {
 			case RoomFileField::name:
 				name = file_read_string(fp);
-				D printf_top("name: %s\n", name.c_str());
+				D printf("name: %s\n", name.c_str());
 				break;
 			case RoomFileField::topic:
 				topic = file_read_string(fp);
-				D printf_top("topic: %s\n", topic.c_str());
+				D printf("topic: %s\n", topic.c_str());
 				break;
 			case RoomFileField::avatarUrl:
 				avatarUrl = file_read_string(fp);
-				D printf_top("avatarUrl: %s\n", avatarUrl.c_str());
+				D printf("avatarUrl: %s\n", avatarUrl.c_str());
 				break;
 			case RoomFileField::roomId:
 				roomId = file_read_string(fp);
-				D printf_top("roomId: %s\n", roomId.c_str());
+				D printf("roomId: %s\n", roomId.c_str());
 				break;
 			case RoomFileField::canonicalAlias:
 				canonicalAlias = file_read_string(fp);
-				D printf_top("alias: %s\n", canonicalAlias.c_str());
+				D printf("alias: %s\n", canonicalAlias.c_str());
 				break;
 			case RoomFileField::lastMsg:
 				file_read_obj(&lastMsg, fp);
-				D printf_top("lastMsg: %llu\n", lastMsg);
+				D printf("lastMsg: %llu\n", lastMsg);
 				break;
 			case RoomFileField::events: {
 				u32 num;
 				file_read_obj(&num, fp);
-				D printf_top("num events: %lu\n", num);
+				D printf("num events: %lu\n", num);
 				if (num) {
 					for (u32 i = 0; i < num; i++) {
 						MatrixEvent* evt = new MatrixEvent(fp);
@@ -372,7 +372,7 @@ void Room::readFromFile(FILE* fp) {
 			case RoomFileField::members: {
 				u32 num;
 				file_read_obj(&num, fp);
-				D printf_top("num members: %lu\n", num);
+				D printf("num members: %lu\n", num);
 				if (num) {
 					for (u32 i = 0; i < num; i++) {
 						std::string mxid = file_read_string(fp);
