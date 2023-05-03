@@ -238,13 +238,6 @@ void logout() {
 
 int main(int argc, char** argv) {
 	consoleInit(NULL);
-	
-	//gfxInitDefault();
-	
-	//topScreenConsole = new PrintConsole;
-	//bottomScreenConsole = new PrintConsole;
-	//consoleInit(GFX_TOP, topScreenConsole);
-	//consoleInit(GFX_BOTTOM, bottomScreenConsole);
 
 	store->init();
 
@@ -282,18 +275,7 @@ int main(int argc, char** argv) {
 	client->setRoomLimitedCallback(&sync_room_limited);
 	
 	printf("Loading channel list...\n");
-	/*
-	while(aptMainLoop()) {
-		hidScanInput();
-		u32 kDown = hidKeysDown();
-		if (kDown & KEY_A) break;
-		// Flush and swap framebuffers
-		gfxFlushBuffers();
-		gfxSwapBuffers();
-		//Wait for VBlank
-		gspWaitForVBlank();
-	}
-	*/
+	
 	roomCollection->readFromFiles();
 	request->start();
 	client->startSyncLoop();
@@ -327,7 +309,7 @@ int main(int argc, char** argv) {
 		}
 		consoleUpdate(NULL);
 	}
-	//client->stopSyncLoop();
+//	client->stopSyncLoop();
 
 	consoleExit(NULL);
 	return 0;
