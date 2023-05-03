@@ -76,7 +76,7 @@ void RoomCollection::maybePrintPicker(int pickerTop, int pickerItem, bool overri
 	order();
 	printf("\x1b[2J");
 	printf("\x1b[%d;1H>", pickerItem - pickerTop + 1);
-	for (u8 i = 0; i < 30; i++) {
+	for (u8 i = 0; i < 45; i++) {
 		if (i + pickerTop >= rooms.size()) {
 			break;
 		}

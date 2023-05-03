@@ -118,7 +118,7 @@ void roomPicker(PadState &pad) {
 		if (roomPickerItem >= roomCollection->size()) {
 			roomPickerItem = roomCollection->size() - 1;
 		}
-		while (roomPickerItem - roomPickerTop > 29) {
+		while (roomPickerItem - roomPickerTop > 44) {
 			roomPickerTop++;
 		}
 		renderRooms = true;
@@ -169,7 +169,7 @@ void displayRoom(PadState &pad) {
 	if (!renderRoomDisplay && !currentRoom->haveDirtyInfo()) {
 		return;
 	}
-	printf("\x1b[2J");
+	//printf("\x1b[2J");
 	renderRoomDisplay = false;
 	currentRoom->printInfo();
 	printf("\nPress A to send a message\nPress B to go back\n");

@@ -72,6 +72,7 @@ void Request::start() {
 	s32 prio = 0;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
 	threadCreate(&loopThread, startLoopWithoutClass, this, NULL, 8*1024, prio-1, -2);
+	threadStart(&loopThread);
 }
 
 void Request::stop() {
