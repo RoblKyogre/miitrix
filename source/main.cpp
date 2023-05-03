@@ -323,7 +323,7 @@ int main(int argc, char** argv) {
 		}
 		consoleUpdate(NULL);
 	}
-//	client->stopSyncLoop();
+	//client->stopSyncLoop();
 
 	consoleExit(NULL);
 	return 0;
