@@ -63,6 +63,7 @@ std::string getMessage() {
 	swkbdConfigMakePresetDefault(&swkbd);
 	swkbdConfigSetGuideText(&swkbd, "Enter message...");
 	swkbdShow(&swkbd, mybuf, sizeof(mybuf));
+	swkbdClose(&swkbd);
 	return mybuf;
 }
 
@@ -73,6 +74,7 @@ std::string getHomeserverUrl() {
 	swkbdConfigMakePresetDefault(&swkbd);
 	swkbdConfigSetGuideText(&swkbd, "Homeserver URL");
 	swkbdShow(&swkbd, mybuf, sizeof(mybuf));
+	swkbdClose(&swkbd);
 	return mybuf;
 }
 
@@ -83,6 +85,7 @@ std::string getUsername() {
 	swkbdConfigMakePresetDefault(&swkbd);
 	swkbdConfigSetGuideText(&swkbd, "Username");
 	swkbdShow(&swkbd, mybuf, sizeof(mybuf));
+	swkbdClose(&swkbd);
 	return mybuf;
 }
 
@@ -93,6 +96,7 @@ std::string getPassword() {
 	swkbdConfigMakePresetPassword(&swkbd);
 	swkbdConfigSetGuideText(&swkbd, "Password");
 	swkbdShow(&swkbd, mybuf, sizeof(mybuf));
+	swkbdClose(&swkbd);
 	return mybuf;
 }
 
