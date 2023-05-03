@@ -49,6 +49,7 @@ GFXBUILD	:=	$(BUILD)
 APP_TITLE	:= Miitrix-NX
 APP_DESCRIPTION := A Matrix Client
 APP_AUTHOR	:= RoblKyogre
+APP_VERSION := 0.0.1
 
 #---------------------------------------------------------------------------------
 # options for code generation

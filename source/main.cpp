@@ -275,7 +275,7 @@ int main(int argc, char** argv) {
 	client->setRoomLimitedCallback(&sync_room_limited);
 	
 	printf("Loading channel list...\n");
-	
+
 	roomCollection->readFromFiles();
 	request->start();
 	client->startSyncLoop();
